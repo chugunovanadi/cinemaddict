@@ -1,4 +1,4 @@
-import { render, RenderPosition } from './render.js';
+import { render } from './render.js';
 import HeaderProfileRatingView from './view/header-profile-view.js';
 import FilterView from './view/filter-view.js';
 import FooterStatisticsView from './view/footer-statistics-view.js';
