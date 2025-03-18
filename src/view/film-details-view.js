@@ -12,7 +12,7 @@ const createFilmDetailsTemplate = (film, comments) => `
         <button class="film-details__close-btn" type="button">close</button>
       </div>
       ${createFilmDetailsInfoTemplate(film)}
-      ${createFilmDetailsControlsTemplate()}
+      ${createFilmDetailsControlsTemplate(film)}
     </div>
 
     <div class="film-details__bottom-container">

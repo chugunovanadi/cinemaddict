@@ -3,6 +3,11 @@ import { humanizeFilmDate, formatFilmDuration } from '../utils.js';
 
 const createFilmCardTemplate = (film) => {
   const {title, totalRating, release, runtime, genre, description, poster} = film.filmInfo;
+  const {isWatchlist, isAlreadyWatched, isFavorite} = film.userDetails;
+  const watchlistClassnName = isWatchlist ? 'film-card__controls-item--add-to-watchlist film-card__controls-item--active' : 'film-card__controls-item--add-to-watchlist';
+  const alreadyWatchedClassName = isAlreadyWatched ? 'film-card__controls-item--mark-as-watched film-card__controls-item--active' : 'film-card__controls-item--mark-as-watched';
+  const favoriteClassName = isFavorite ? 'film-card__controls-item--favorite film-card__controls-item--active' : 'film-card__controls-item--favorite';
+
   return `
       <article class="film-card">
           <a class="film-card__link">
@@ -19,9 +24,9 @@ const createFilmCardTemplate = (film) => {
           </a>
 
           <div class="film-card__controls">
-            <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-            <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-            <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+            <button class="film-card__controls-item ${watchlistClassnName}" type="button">Add to watchlist</button>
+            <button class="film-card__controls-item ${alreadyWatchedClassName}" type="button">Mark as watched</button>
+            <button class="film-card__controls-item ${favoriteClassName}" type="button">Mark as favorite</button>
           </div>
       </article>
 `;

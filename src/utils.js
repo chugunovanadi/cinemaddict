@@ -34,4 +34,7 @@ const getRandomValue = (items) => {
   const randomIndex = getRandomInteger(0, items.length-1);
   return items[randomIndex];
 };
-export {getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration};
+
+const getRandomBoolean = () => Math.random() < 0.5;
+
+export {getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration, getRandomBoolean};

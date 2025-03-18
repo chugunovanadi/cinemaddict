@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomFloat, getRandomValue } from '../utils';
+import { getRandomInteger, getRandomFloat, getRandomValue, getRandomBoolean } from '../utils';
 
 const titles = [
   'Country On Him',
@@ -47,6 +47,13 @@ const generateFilmInfo = () => ({
   description: getRandomValue(description),
 });
 
+const generateUserDetails = () => ({ //зарандомить данные и отобразить их во view
+  isWatchlist: getRandomBoolean(),
+  isAlreadyWatched: true,
+  watchingDate:'2021-05-27T00:00:00.000Z',
+  isFavorite: getRandomBoolean(),
+});
+
 const generateFilms = () => {
   let totalCommentCount = 0;
   const films = Array.from({length: FILM_COUNT}, generateFilmInfo);
@@ -57,6 +64,7 @@ const generateFilms = () => {
     return {
       id: String(index+1),
       filmInfo: film,
+      userDetails: generateUserDetails(),
       comments: (hasComment) ? Array.from({length:filmCommentsCount}, (_, commentIndex) => String(totalCommentCount - commentIndex)) : [],
     };
   }
