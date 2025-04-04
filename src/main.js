@@ -17,5 +17,5 @@ render (new FooterStatisticsView, footerStatisticsContainer);
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel(filmsModel);
 
-const filmsPresenter = new FilmsPresenter();
-filmsPresenter.init(mainContainer, filmsModel, commentsModel);
+const filmsPresenter = new FilmsPresenter(mainContainer, filmsModel, commentsModel);
+filmsPresenter.init();
