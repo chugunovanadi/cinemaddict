@@ -10,11 +10,15 @@ export default class CommentsModel {
     this.#allComments = generateComments(this.#films);
   }
 
-  set film(newFilm) {
+  set currentFilm(newFilm) {
     this.#film = newFilm;
   }
 
-  get film() {
+  get currentFilm() {
+    return this.#film;
+  }
+
+  get currentFilmComments() {
     if (!this.#film.comments) {
       return [];
     }

@@ -16,6 +16,7 @@ export default class FilmsPresenter {
   #filmListComponent = new FilmListView();
   #filmListContainerComponent = new FilmListContainerView();
   #filmButtonMoreComponent = new FilmButtonMoreView();
+  #filmDetailsComponent = null;
 
   constructor(container, filmsModel, commentsModel) {
     this.#container = container;
@@ -24,27 +25,54 @@ export default class FilmsPresenter {
   }
 
   init() {
-    this.#renderFilm();
-    this.#renderFilmDetails();
+    this.#films = [...this.#filmsModel.films];
+    this.#renderFilmsBoard();
   }
 
-  #renderFilm = () => {
-    this.#films = [...this.#filmsModel.films];
+  #renderFilmsBoard = () => {
     render(this.#sortComponent, this.#container);
     render(this.#filmsComponent, this.#container);
     render(this.#filmListComponent, this.#filmsComponent.element);
     render(this.#filmListContainerComponent, this.#filmListComponent.element);
-
     for (let i = 0; i < this.#films.length; i++) {
-      render(new FilmCardView(this.#films[i]), this.#filmListContainerComponent.element);
+      this.#renderFilms(this.#films[i], this.#filmListContainerComponent);
     }
-
     render(this.#filmButtonMoreComponent, this.#filmListComponent.element);
   };
 
-  #renderFilmDetails = () => {
-    this.#commentsModel.film = this.#films[0];
-    const comments = [...this.#commentsModel.film];
-    render(new FilmDetailsView(this.#films[0], comments), this.#container.parentElement);
+  #renderFilms = (film, container) => {
+    const filmCardComponent = new FilmCardView(film);
+    const filmCardLink = filmCardComponent.element.querySelector('.film-card__link');
+    filmCardLink.addEventListener('click', () => {
+      this.#renderFilmDetails(film);
+      document.body.classList.add('hide-overflow');
+      document.addEventListener('keydown', this.#onEscKeyDown);
+    });
+    render(filmCardComponent, container.element);
+  };
+
+  #renderFilmDetails = (film) => {
+    this.#commentsModel.currentFilm = film;
+    const comments = [...this.#commentsModel.currentFilmComments];
+    this.#filmDetailsComponent = new FilmDetailsView(film, comments);
+    const filmDetailsCloseButton = this.#filmDetailsComponent.element.querySelector('.film-details__close-btn');
+    filmDetailsCloseButton.addEventListener('click', () => {
+      this.#removeFilmDetailsPopup();
+    });
+    render(this.#filmDetailsComponent, this.#container.parentElement);
+  };
+
+  #removeFilmDetailsPopup = () => {
+    this.#filmDetailsComponent.element.remove();
+    this.#filmDetailsComponent.removeElement();
+    document.body.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+  };
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#removeFilmDetailsPopup();
+    }
   };
 }
