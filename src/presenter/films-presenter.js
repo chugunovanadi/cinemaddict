@@ -5,7 +5,10 @@ import FilmListContainerView from '../view/film-list-container-view.js';
 import FilmButtonMoreView from '../view/film-button-show-more-view.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
+import FilmEmptyView from '../view/film-empty-view.js';
+import FilmListTitleView from '../view/film-list-title-view.js';
 import { render } from '../render.js';
+const FILM_COUNT_PER_STEP = 5;
 export default class FilmsPresenter {
   #container = null;
   #filmsModel = null;
@@ -17,6 +20,7 @@ export default class FilmsPresenter {
   #filmListContainerComponent = new FilmListContainerView();
   #filmButtonMoreComponent = new FilmButtonMoreView();
   #filmDetailsComponent = null;
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   constructor(container, filmsModel, commentsModel) {
     this.#container = container;
@@ -30,14 +34,32 @@ export default class FilmsPresenter {
   }
 
   #renderFilmsBoard = () => {
+    if (this.#films.length === 0) {
+      render(new FilmEmptyView(), this.#container);
+      return;
+    }
     render(this.#sortComponent, this.#container);
     render(this.#filmsComponent, this.#container);
     render(this.#filmListComponent, this.#filmsComponent.element);
+    render(new FilmListTitleView(), this.#filmListComponent.element);
     render(this.#filmListContainerComponent, this.#filmListComponent.element);
-    for (let i = 0; i < this.#films.length; i++) {
+    for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
       this.#renderFilms(this.#films[i], this.#filmListContainerComponent);
     }
-    render(this.#filmButtonMoreComponent, this.#filmListComponent.element);
+    if (this.#films.length > FILM_COUNT_PER_STEP) {
+      render(this.#filmButtonMoreComponent, this.#filmListComponent.element);
+      this.#filmButtonMoreComponent.element.addEventListener('click', this.#handleFilmButtonMoreClick);
+    }
+  };
+
+  #handleFilmButtonMoreClick = (evt) => {
+    evt.preventDefault();
+    this.#films.slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP).forEach((film) => this.#renderFilms(film, this.#filmListContainerComponent));
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+    if (this.#renderedFilmCount >= this.#films.length) {
+      this.#filmButtonMoreComponent.element.remove();
+      this.#filmButtonMoreComponent.removeElement();
+    }
   };
 
   #renderFilms = (film, container) => {

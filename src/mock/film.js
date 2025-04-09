@@ -20,7 +20,7 @@ const description = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. C
   'Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
   'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.',
   'In rutrum ac purus sit amet tempus.'];
-const FILM_COUNT = 10;
+const FILM_COUNT = 11;
 const MAX_COMMENTS_COUNT = 10;
 
 const generateFilmInfo = () => ({
@@ -47,7 +47,7 @@ const generateFilmInfo = () => ({
   description: getRandomValue(description),
 });
 
-const generateUserDetails = () => ({ //зарандомить данные и отобразить их во view
+const generateUserDetails = () => ({
   isWatchlist: getRandomBoolean(),
   isAlreadyWatched: true,
   watchingDate:'2021-05-27T00:00:00.000Z',
