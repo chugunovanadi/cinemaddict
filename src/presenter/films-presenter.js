@@ -7,7 +7,7 @@ import FilmCardView from '../view/film-card-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
 import FilmEmptyView from '../view/film-empty-view.js';
 import FilmListTitleView from '../view/film-list-title-view.js';
-import { render } from '../render.js';
+import { render, remove } from '../framework/render.js';
 const FILM_COUNT_PER_STEP = 5;
 export default class FilmsPresenter {
   #container = null;
@@ -48,24 +48,21 @@ export default class FilmsPresenter {
     }
     if (this.#films.length > FILM_COUNT_PER_STEP) {
       render(this.#filmButtonMoreComponent, this.#filmListComponent.element);
-      this.#filmButtonMoreComponent.element.addEventListener('click', this.#handleFilmButtonMoreClick);
+      this.#filmButtonMoreComponent.setButtonClickHandler(this.#handleFilmButtonMoreClick);
     }
   };
 
-  #handleFilmButtonMoreClick = (evt) => {
-    evt.preventDefault();
+  #handleFilmButtonMoreClick = () => {
     this.#films.slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP).forEach((film) => this.#renderFilms(film, this.#filmListContainerComponent));
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
     if (this.#renderedFilmCount >= this.#films.length) {
-      this.#filmButtonMoreComponent.element.remove();
-      this.#filmButtonMoreComponent.removeElement();
+      remove(this.#filmButtonMoreComponent);
     }
   };
 
   #renderFilms = (film, container) => {
     const filmCardComponent = new FilmCardView(film);
-    const filmCardLink = filmCardComponent.element.querySelector('.film-card__link');
-    filmCardLink.addEventListener('click', () => {
+    filmCardComponent.setClickHandler(() => {
       this.#renderFilmDetails(film);
       document.body.classList.add('hide-overflow');
       document.addEventListener('keydown', this.#onEscKeyDown);
@@ -77,16 +74,14 @@ export default class FilmsPresenter {
     this.#commentsModel.currentFilm = film;
     const comments = [...this.#commentsModel.currentFilmComments];
     this.#filmDetailsComponent = new FilmDetailsView(film, comments);
-    const filmDetailsCloseButton = this.#filmDetailsComponent.element.querySelector('.film-details__close-btn');
-    filmDetailsCloseButton.addEventListener('click', () => {
+    this.#filmDetailsComponent.setFilmDetailsClickHandler(() => {
       this.#removeFilmDetailsPopup();
     });
     render(this.#filmDetailsComponent, this.#container.parentElement);
   };
 
   #removeFilmDetailsPopup = () => {
-    this.#filmDetailsComponent.element.remove();
-    this.#filmDetailsComponent.removeElement();
+    remove(this.#filmDetailsComponent);
     document.body.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };

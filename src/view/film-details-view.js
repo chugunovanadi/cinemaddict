@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { createFilmDetailsInfoTemplate } from './film-details-info-template.js';
 import { createFilmDetailsControlsTemplate } from './film-details-controls-template.js';
 import { createFilmDetailsCommentsListTemplate } from './film-details-comments-list-template.js';
@@ -28,12 +28,12 @@ const createFilmDetailsTemplate = (film, comments) => `
 </section>
 `;
 
-export default class FilmDetailsView {
-  #element = null;
+export default class FilmDetailsView extends AbstractView {
   #film = null;
   #comments = null;
 
   constructor (film, comments) {
+    super();
     this.#film = film;
     this.#comments = comments;
   }
@@ -42,14 +42,13 @@ export default class FilmDetailsView {
     return createFilmDetailsTemplate(this.#film, this.#comments);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  setFilmDetailsClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  };
 
-  removeElement(){
-    this.#element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
