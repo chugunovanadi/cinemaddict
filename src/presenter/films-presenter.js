@@ -8,6 +8,7 @@ import FilmListTitleView from '../view/film-list-title-view.js';
 import { render, remove } from '../framework/render.js';
 import FilmCardPresenter from './film-card-presenter.js';
 import FilmDetailsPopupPresenter from './film-details-popup-presenter.js';
+import { updateItem } from '../utils.js';
 const FILM_COUNT_PER_STEP = 5;
 export default class FilmsPresenter {
   #container = null;
@@ -20,6 +21,8 @@ export default class FilmsPresenter {
   #filmListContainerComponent = new FilmListContainerView();
   #filmButtonMoreComponent = new FilmButtonMoreView();
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #filmCardPresenter = new Map();
+  #currentFilmDetailsPopupPresenter = null;
 
   constructor(container, filmsModel, commentsModel) {
     this.#container = container;
@@ -76,8 +79,9 @@ export default class FilmsPresenter {
   };
 
   #renderFilmCard = (film, container) => {
-    const filmCardPresenter = new FilmCardPresenter(container, this.#renderFilmDetails);
+    const filmCardPresenter = new FilmCardPresenter(container, this.#renderFilmDetails, this.#handleFilmChange, this.#removeCurrentFilmDetailsPopup);
     filmCardPresenter.init(film);
+    this.#filmCardPresenter.set(film.id, filmCardPresenter);
   };
 
   #renderFilmsList = () => {
@@ -87,10 +91,34 @@ export default class FilmsPresenter {
     }
   };
 
+  #handleFilmChange = (updatedFilm) => {
+    this.#films = updateItem(this.#films, updatedFilm);
+    this.#filmCardPresenter.get(updatedFilm.id).init(updatedFilm);
+
+    this.#commentsModel.currentFilm = updatedFilm;
+    const comments = [...this.#commentsModel.currentFilmComments];
+    this.#currentFilmDetailsPopupPresenter.init(updatedFilm, comments);
+  };
+
   #renderFilmDetails = (film) => {
     this.#commentsModel.currentFilm = film;
     const comments = [...this.#commentsModel.currentFilmComments];
-    const filmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#container);
+    const filmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#container, this.#handleFilmChange);
     filmDetailsPopupPresenter.init(film, comments);
+    this.#currentFilmDetailsPopupPresenter = filmDetailsPopupPresenter;
+  };
+
+  #removeCurrentFilmDetailsPopup = () => {
+    if (this.#currentFilmDetailsPopupPresenter) {
+      this.#currentFilmDetailsPopupPresenter.destroy();
+      this.#currentFilmDetailsPopupPresenter = null;
+    }
+  };
+
+  #clearFilmList = () => {
+    this.#filmCardPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmCardPresenter.clear();
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#filmButtonMoreComponent);
   };
 }

@@ -1,4 +1,5 @@
 import { getRandomInteger, getRandomFloat, getRandomValue, getRandomBoolean } from '../utils';
+import { nanoid } from 'nanoid';
 
 const titles = [
   'Country On Him',
@@ -57,12 +58,12 @@ const generateUserDetails = () => ({
 const generateFilms = () => {
   let totalCommentCount = 0;
   const films = Array.from({length: FILM_COUNT}, generateFilmInfo);
-  return films.map((film, index) => {
+  return films.map((film) => {
     const hasComment = getRandomInteger(0, 1);
     const filmCommentsCount = (hasComment) ? getRandomInteger(1, MAX_COMMENTS_COUNT) : 0 ;
     totalCommentCount += filmCommentsCount;
     return {
-      id: String(index+1),
+      id: nanoid(),
       filmInfo: film,
       userDetails: generateUserDetails(),
       comments: (hasComment) ? Array.from({length:filmCommentsCount}, (_, commentIndex) => String(totalCommentCount - commentIndex)) : [],
