@@ -4,4 +4,11 @@ const SortType = {
   RATING: 'rating',
 };
 
-export{SortType};
+const EmotionType = {
+  SMILE: 'smile',
+  PUKE: 'puke',
+  ANGRY: 'angry',
+  SLEEPING: 'sleeping',
+};
+
+export{SortType, EmotionType};

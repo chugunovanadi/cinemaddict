@@ -1,10 +1,10 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { createFilmDetailsInfoTemplate } from './film-details-info-template.js';
 import { createFilmDetailsControlsTemplate } from './film-details-controls-template.js';
 import { createFilmDetailsCommentsListTemplate } from './film-details-comments-list-template.js';
 import { createFilmDetailsFormNewCommentTemplate } from './film-details-form-new-comment-template.js';
 
-const createFilmDetailsTemplate = (film, comments) => `
+const createFilmDetailsTemplate = (film, comments, emotion, newComment) => `
 <section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
@@ -21,26 +21,79 @@ const createFilmDetailsTemplate = (film, comments) => `
       <ul class="film-details__comments-list">
         ${createFilmDetailsCommentsListTemplate(comments)}
       </ul>
-        ${createFilmDetailsFormNewCommentTemplate()}
+        ${createFilmDetailsFormNewCommentTemplate(emotion, newComment)}
       </section>
     </div>
   </form>
 </section>
 `;
 
-export default class FilmDetailsView extends AbstractView {
-  #film = null;
+export default class FilmDetailsView extends AbstractStatefulView {
   #comments = null;
 
   constructor (film, comments) {
     super();
-    this.#film = film;
+    this._state = FilmDetailsView.transformFilmToState(film);
     this.#comments = comments;
+    this._restoreHandlers();
   }
 
   get template() {
-    return createFilmDetailsTemplate(this.#film, this.#comments);
+    return createFilmDetailsTemplate(this._state, this.#comments, this._state.emotion, this._state.newComment);
   }
+
+  static transformFilmToState = (film) => ({
+    ...film,
+    newComment: null,
+    emotion: null,
+    scrollPosition: 0,
+  });
+
+  static transformStateToFilm = (state) => {
+    const film = {...state};
+    delete film.emotion;
+    delete film.scrollPosition;
+    delete film.newComment;
+    return film;
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setCloseClickHandler(this._callback.click);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+
+    this.#restoreScroll();
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emotionClickHandler);
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
+  };
+
+  #restoreScroll = () => {
+    this.element.scrollTop = this._state.scrollPosition;
+  };
+
+  #emotionClickHandler = (evt) => {
+    if (evt.target.name !== 'comment-emoji') {
+      return;
+    }
+    evt.preventDefault();
+    this.updateElement({
+      emotion: evt.target.dataset.emotionType,
+      scrollPosition: this.element.scrollTop,
+    });
+  };
+
+  #commentInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      newComment: evt.target.value,
+    });
+  };
+
 
   setCloseClickHandler = (callback) => {
     this._callback.click = callback;
