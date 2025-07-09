@@ -59,7 +59,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    this.setCloseClickHandler(this._callback.click);
+    this.setCloseClickHandler(this._callback.clickClose);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
@@ -82,7 +82,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     }
     evt.preventDefault();
     this.updateElement({
-      emotion: evt.target.dataset.emotionType,
+      emotion: evt.target.value,
       scrollPosition: this.element.scrollTop,
     });
   };
@@ -96,7 +96,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
 
   setCloseClickHandler = (callback) => {
-    this._callback.click = callback;
+    this._callback.clickClose = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
   };
 
@@ -117,7 +117,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.clickClose();
   };
 
   #watchlistClickHandle = (evt) => {

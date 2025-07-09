@@ -1,3 +1,5 @@
+import { humanizeCommentDate } from '../utils';
+
 const createFilmDetailsCommentsListTemplate = (comments) =>
   comments.map(({ author, comment, date, emotion }) => `
     <li class="film-details__comment">
@@ -8,7 +10,7 @@ const createFilmDetailsCommentsListTemplate = (comments) =>
           <p class="film-details__comment-text">${comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">${date}</span>
+            <span class="film-details__comment-day">${humanizeCommentDate(date)}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>

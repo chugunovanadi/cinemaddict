@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 const formatFilmDuration = (minutes) => {
   const dur = dayjs.duration(minutes, 'minutes');
@@ -13,6 +15,7 @@ const formatFilmDuration = (minutes) => {
 
 
 const humanizeFilmDate = (date) => dayjs(date).format('D MMMM YYYY');
+const humanizeCommentDate = (date) => dayjs(date).fromNow();
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -55,4 +58,4 @@ const sortData = (filmA, filmB) => dayjs(filmB.filmInfo.release.date).diff(dayjs
 
 const sortRating = (filmA, filmB) => filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 
-export {sortRating, sortData, updateItem, getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration, getRandomBoolean};
+export {humanizeCommentDate, sortRating, sortData, updateItem, getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration, getRandomBoolean};
