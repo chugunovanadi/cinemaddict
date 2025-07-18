@@ -40,22 +40,8 @@ const getRandomValue = (items) => {
 
 const getRandomBoolean = () => Math.random() < 0.5;
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
 const sortData = (filmA, filmB) => dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date));
 
 const sortRating = (filmA, filmB) => filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 
-export {humanizeCommentDate, sortRating, sortData, updateItem, getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration, getRandomBoolean};
+export {humanizeCommentDate, sortRating, sortData, getRandomInteger, getRandomFloat, getRandomValue, humanizeFilmDate, formatFilmDuration, getRandomBoolean};

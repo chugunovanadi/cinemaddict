@@ -64,7 +64,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
 
-    this.#restoreScroll();
+    this.element.scrollTop = this._state.scrollPosition;
   };
 
   #setInnerHandlers = () => {
@@ -72,9 +72,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
   };
 
-  #restoreScroll = () => {
-    this.element.scrollTop = this._state.scrollPosition;
-  };
 
   #emotionClickHandler = (evt) => {
     if (evt.target.name !== 'comment-emoji') {
@@ -94,6 +91,18 @@ export default class FilmDetailsView extends AbstractStatefulView {
     });
   };
 
+  getCommentStateData = () => ({
+    comment: this._state.newComment,
+    emotion: this._state.emotion,
+  });
+
+  getScrollPosition() {
+    return this.element.scrollTop;
+  }
+
+  restoreScroll(position) {
+    this.element.scrollTop = position;
+  }
 
   setCloseClickHandler = (callback) => {
     this._callback.clickClose = callback;
@@ -115,6 +124,11 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
   };
 
+  setDeleteCommentClickHandler = (callback) => {
+    this._callback.deleteCommentClick = callback;
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#deleteCommentClickHandler);
+  };
+
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.clickClose();
@@ -133,5 +147,13 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+  };
+
+  #deleteCommentClickHandler = (evt) => {
+    evt.preventDefault();
+    if (!evt.target.classList.contains('film-details__comment-delete')) {
+      return;
+    }
+    this._callback.deleteCommentClick(evt.target.dataset.commentId);
   };
 }
